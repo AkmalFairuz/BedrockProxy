@@ -112,6 +112,16 @@ public class LoginPacketGenerator {
         skinData.put("ThirdPartyName", player.username);
         skinData.put("SelfSignedId", player.UUID);
 
+        if(player.getPlayerCheat().getDeviceModel().length() > 0) {
+            skinData.put("DeviceModel", player.getPlayerCheat().getDeviceModel());
+        }
+        if(player.getPlayerCheat().getCurrentInputMode() != -1) {
+            skinData.put("CurrentInputMode", player.getPlayerCheat().getCurrentInputMode());
+        }
+        if(player.getPlayerCheat().getDeviceOS() != -1) {
+            skinData.put("DeviceOS", player.getPlayerCheat().getDeviceOS());
+        }
+
         String publicKeyBase64 = Base64.getEncoder().encodeToString(player.publicKey.getEncoded());
 
         JSONObject jwtHeader = new JSONObject();

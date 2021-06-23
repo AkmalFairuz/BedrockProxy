@@ -19,6 +19,18 @@ public class PlayerCheat {
     @Setter
     private boolean fakeLag = false;
 
+    @Getter
+    @Setter
+    private String deviceModel = "";
+
+    @Getter
+    @Setter
+    private int deviceOS;
+
+    @Getter
+    @Setter
+    private int currentInputMode;
+
     public PlayerCheat(Player player) {
         this.player = player;
     }

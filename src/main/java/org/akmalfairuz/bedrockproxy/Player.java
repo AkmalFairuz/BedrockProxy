@@ -362,6 +362,53 @@ public class Player{
         input2.put("default", "19132");
         formContent.add(input2);
 
+        JSONObject input3 = new JSONObject();
+        input3.put("type", "input");
+        input3.put("text", "Fake Device Model (optional)");
+        input3.put("placeholder", "");
+        input3.put("default", null);
+        formContent.add(input3);
+
+        JSONObject input4 = new JSONObject();
+        input4.put("type", "dropdown");
+        input4.put("text", "Fake Current Input Mode (optional)");
+
+        ArrayList<String> currentInputMode = new ArrayList<>();
+        currentInputMode.add("");
+        currentInputMode.add("Unknown");
+        currentInputMode.add("Mouse");
+        currentInputMode.add("Touch");
+        currentInputMode.add("Controller");
+
+        input4.put("options", currentInputMode);
+        input4.put("default", null);
+        formContent.add(input4);
+
+        JSONObject input5 = new JSONObject();
+        input5.put("type", "dropdown");
+        input5.put("text", "Fake Device OS (optional)");
+
+        ArrayList<String> os = new ArrayList<>();
+        os.add("");
+        os.add("Android");
+        os.add("iOS");
+        os.add("macOS");
+        os.add("Amazon");
+        os.add("Gear VR");
+        os.add("HoloLens");
+        os.add("Windows 10");
+        os.add("Windows");
+        os.add("Dedicated");
+        os.add("Orbis");
+        os.add("PlayStation 4");
+        os.add("Nintendo Switch");
+        os.add("Xbox One");
+        os.add("Windows Phone");
+
+        input5.put("options", os);
+        input5.put("default", null);
+        formContent.add(input5);
+
         formData.put("content", formContent);
 
         form.setFormData(JSON.toJSONString(formData));
@@ -402,7 +449,7 @@ public class Player{
         int formId = packet.getFormId();
         if(formId == -50001) { // login
             ArrayList<String> formData = JSON.parseObject(packet.getFormData(), new TypeReference<>(){});
-            if(formData.size() != 2) {
+            if(formData.get(1) == null) {
                 return true;
             }
             if(accessToken != null) {
@@ -427,16 +474,24 @@ public class Player{
             return true;
         }
         if(formId == -50002) { // connect
-            ArrayList<String> formData = JSON.parseObject(packet.getFormData(), new TypeReference<>(){});
-            if(formData.size() != 2) {
+            ArrayList<Object> formData = JSON.parseObject(packet.getFormData(), new TypeReference<>(){});
+            if(formData.get(4) == null) {
                 return true;
             }
             if(isConnectedToServer()) {
                 sendMessage("You are connected to server.");
                 return true;
             }
-            String address = formData.get(0);
-            Integer port = Integer.parseInt(formData.get(1));
+            String address = (String) formData.get(0);
+            Integer port = Integer.parseInt((String) formData.get(1));
+            String deviceModel = (String) formData.get(2);
+            playerCheat.setDeviceModel(deviceModel);
+            int currentInputMode = (int) formData.get(3) - 1;
+            playerCheat.setCurrentInputMode(currentInputMode);
+            int deviceOS = (int) formData.get(4);
+            if(deviceOS != 0) {
+                playerCheat.setDeviceOS(deviceOS);
+            }
             sendMessage("Connecting to " + address + ":" + port + "...");
             connectToServer(address, port);
             return true;
@@ -447,7 +502,7 @@ public class Player{
                 return true;
             }
             ArrayList<String> formData = JSON.parseObject(packet.getFormData(), new TypeReference<>(){});
-            if(formData.size() != 1) {
+            if(formData.get(0) == null) {
                 return true;
             }
             getPlayerCheat().setFakeLag(true);
