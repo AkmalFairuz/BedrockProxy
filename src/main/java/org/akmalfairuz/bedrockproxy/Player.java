@@ -241,13 +241,6 @@ public class Player{
                     if(playerCheat.isAntikb()) {
                         playerCheat.setAntikb(false);
                         sendMessage("AntiKB Disabled");
-                        if(playerCheat.isFakeLag() && isConnectedToServer() && isInitialized()) {
-                            for(BedrockPacket next = fakeLagQueuedPackets.poll(); next != null; next = fakeLagQueuedPackets.poll()) {
-                                serverSession.sendPacket(next);
-                                clientSession.sendPacket(next);
-                            }
-                        }
-                        fakeLagTimer.cancel();
                     } else {
                         playerCheat.setAntikb(true);
                         sendMessage("AntiKB Enabled");
@@ -276,6 +269,10 @@ public class Player{
                     return true;
                 case "fakelag":
                     if(playerCheat.isFakeLag()) {
+                        for(BedrockPacket next = fakeLagQueuedPackets.poll(); next != null; next = fakeLagQueuedPackets.poll()) {
+                            serverSession.sendPacket(next);
+                            clientSession.sendPacket(next);
+                        }
                         playerCheat.setFakeLag(false);
                         fakeLagTimer.cancel();
                         sendMessage("§eFakeLag Disabled");
